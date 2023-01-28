@@ -3,8 +3,13 @@ from .models import(
     Customer,
     Product,
     Cart,
-    OrderPlaced
+    OrderPlaced,
+    Profile
 )
+
+admin.site.register(Profile)
+
+
 
 @admin.register(Customer)
 class CustomerModelAdmin(admin.ModelAdmin):

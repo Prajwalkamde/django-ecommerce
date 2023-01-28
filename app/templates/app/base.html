@@ -34,12 +34,14 @@
            <li class="nav-item">
              <a class="nav-link active" aria-current="page" href="/">Home</a>
            </li>
-           <li class="nav-item dropdown">
+           <li class="nav-item dropdown dmenu">
+            
              <a class="nav-link dropdown-toggle text-white" href="#" id="electronicsDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                Electronics
              </a>
              <ul class="dropdown-menu" aria-labelledby="electronicsDropdown">
                <li><a class="dropdown-item" href="{% url 'mobile' %}">Mobile</a></li>
+               <li><a class="dropdown-item" href="{% url 'watch' %}">Watch</a></li>
                <li><a class="dropdown-item" href="#">Laptop</a></li>
              </ul>
            </li>
@@ -55,42 +57,63 @@
          </ul>
          <form class="d-flex">
            <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
-           <button class="btn btn-warning" type="submit"><i class="fa-solid fa-magnifying-glass"></i></button>
+           <button class="btn btn-outline-warning" type="submit"><i class="fa-solid fa-magnifying-glass"></i></button>
          </form>
          <div>
           <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+
+          {% if request.user.is_authenticated %}
+
            <li class="nav-item dropdown mx-2">
               <a class="nav-link dropdown-toggle text-white" href="#" id="profileDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                User
+                <span class="text-capitalize">{{request.user}}</span>
               </a>
               <ul class="dropdown-menu" aria-labelledby="profileDropdown">
                 <li><a class="dropdown-item" href="{% url 'profile' %}">Profile</a></li>
                 <li><a class="dropdown-item" href="{% url 'orders' %}">Orders</a></li>
-                <li><a class="dropdown-item" href="{% url 'changepassword' %}">Change Password</a></li>
-                <li><a class="dropdown-item" href="#">Logout</a></li>
+                {% comment %} <li><a class="dropdown-item" href="{% url 'changepassword' %}">Change Password</a></li> {% endcomment %}
+                <li><a class="dropdown-item" href="/logout">Logout</a></li>
               </ul>
             </li>
             <li class="nav-item mx-2">
-             <a href="{% url 'add-to-cart' %}" class="nav-link text-white"><span class="badge bg-danger">4</span> Cart </a>
+             <a href="{% url 'show_cart' %}" class="nav-link text-white"><span class="badge bg-danger">4</span> Cart </a>
+            </li>
+            
+            {% else %}
+
+
+            <li class="nav-item mx-2">
+              <a href="{% url 'login' %}" class="btn btn-warning  text-center mx-2" >
+                Login
+               </a>
+             {% comment %} <a href="{% url 'login' %}" class="nav-link text-white">Login</a> {% endcomment %}
             </li>
             <li class="nav-item mx-2">
-             <a href="{% url 'login' %}" class="nav-link text-white">Login</a>
+              <a href="{% url 'customerregistration' %}" class="btn btn-danger text-center" >
+                Sign Up
+               </a>
+             {% comment %} <a href="{% url 'customerregistration' %}" class="nav-link text-white">Registration</a> {% endcomment %}
             </li>
-            <li class="nav-item mx-2">
-             <a href="{% url 'customerregistration' %}" class="nav-link text-white">Registration</a>
-            </li>
+
+            {% endif %}
+            
           </ul>
          </div>
        </div>
      </div>
     </nav>
+
+
+
     {% block banner_slider %} {% endblock banner_slider %}
     {% block livesale %} {% endblock livesale %}
-    {% block main-content %} {% endblock main-content %}
+    {% block main-content %} 
+     
+    {% endblock main-content %}
 
     <!-- Start Footer -->
-    <footer class="container-fluid bg-dark text-center p-2 mt-5 ">
-        <small class="text-white">Copyright &copy; 2022 || All Right Reserved. || </small>
+    <footer class="container-fluid fixed-bottom bg-secondary text-center p-2 mt-5 ">
+        <small class="text-white">Copyright &copy; 2023 || All Right Reserved. || Created by <a class="text-decoration-none text-white" href="https://www.linkedin.com/in/prajwal-kamde/">Prajwal Kamde</a></small>
         <img src="{% static 'app/images/payment.png' %}" alt="" srcset="" class="img-fluid" height="2px">
     </footer> <!-- End Footer -->
 
@@ -102,5 +125,8 @@
     <script src="{% static 'app/js/owl.carousel.min.js' %}"></script>
     <script src="{% static 'app/js/all.min.js' %}"></script>
     <script src="{% static 'app/js/myscript.js' %}"></script>
+
+
+    
   </body>
 </html>

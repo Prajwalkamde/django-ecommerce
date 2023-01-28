@@ -1,23 +1,22 @@
 {% extends 'app/base.html' %}
 {% load static %}
-{% block title %}Mobile{% endblock title %}
+{% block title %}Watch{% endblock title %}
 {% block main-content %}
 <div class="container my-5">
  <div class="row">
   <div class="col-sm-3 my-4">
    <div class="list-group">
-    <a href="{% url 'mobile' %}" class="list-group-item list-group-item-action " area-current="true">All Mobiles</a>
-    <a href="{% url 'mobiledata' 'Redmi' %}" class="list-group-item list-group-item-action " area-current="true">Redmi</a>
-    <a href="{% url 'mobiledata' 'Samsung' %}" class="list-group-item list-group-item-action " area-current="true">Samsung</a>
-    <a href="{% url 'mobiledata' 'OnePlus' %}" class="list-group-item list-group-item-action " area-current="true">One Plus</a>
-    <a href="{% url 'mobiledata' 'below-10000' %}" class="list-group-item list-group-item-action " area-current="true">Below 10000</a>
-    <a href="{% url 'mobiledata' 'above-10000' %}" class="list-group-item list-group-item-action " area-current="true">Above 10000</a>
+    <a href="{% url 'watch' %}" class="list-group-item list-group-item-action " area-current="true">All Watches</a>
+    <a href="{% url 'watchdata' 'Boat' %}" class="list-group-item list-group-item-action " area-current="true">Boat</a>
+    <a href="{% url 'watchdata' 'Realme' %}" class="list-group-item list-group-item-action " area-current="true">Realme</a>
+    <a href="{% url 'watchdata' 'below-2000' %}" class="list-group-item list-group-item-action " area-current="true">Below 2000</a>
+    <a href="{% url 'watchdata' 'above-2000' %}" class="list-group-item list-group-item-action " area-current="true">Above 2000</a>
    </div>
   </div>
 
   <div class="col-sm-8 offset-sm-1 my-4">
    <div class="row">
-    {% for product in mobiles %}
+    {% for product in watches %}
     
     <div class="col-sm-4 text-center mb-4">
         <a href="{%url 'product-detail' product.id %}" class="btn">

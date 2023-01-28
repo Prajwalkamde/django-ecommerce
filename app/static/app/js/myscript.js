@@ -21,3 +21,70 @@ $('#slider1, #slider2, #slider3, #slider4, #slider5, #slider6, #slider7').owlCar
         }
     }
 })
+
+
+$('.plus-cart').click(function(){
+    var id = $(this).attr("pid").toString();
+    var eml = this.parentNode.children[2]
+    // console.log(id)
+    $.ajax({
+        type : "GET",
+        url : "/plus_cart",
+        data : {
+            prod_id : id
+
+        },
+        success : function (data) {
+            eml.innerText = data.quantity
+            document.getElementById('amount').innerText = data.amount
+            document.getElementById('totalamount').innerText = data.totalamount
+            // console.log(data)
+        }
+    })
+})
+
+
+
+
+$('.minus-cart').click(function(){
+    var id = $(this).attr("pid").toString();
+    var eml = this.parentNode.children[2]
+    // console.log(id)
+    $.ajax({
+        type : "GET",
+        url : "/minus_cart",
+        data : {
+            prod_id : id
+
+        },
+        success : function (data) {
+            eml.innerText = data.quantity
+            document.getElementById('amount').innerText = data.amount
+            document.getElementById('totalamount').innerText = data.totalamount
+            // console.log(data)
+        }
+    })
+})
+
+
+
+
+$('.remove-cart').click(function(){
+    var id = $(this).attr("pid").toString();
+    var eml = this
+    // console.log(id)
+    $.ajax({
+        type : "GET",
+        url : "/remove_cart",
+        data : {
+            prod_id : id
+
+        },
+        success : function (data) {
+            document.getElementById('amount').innerText = data.amount
+            document.getElementById('totalamount').innerText = data.totalamount
+            eml.parentNode.parentNode.parentNode.parentNode.remove()
+            // console.log(data)
+        }
+    })
+})

@@ -3,38 +3,60 @@
 {% block title %}Customer Registration{% endblock title %}
 {% block main-content %}
 <div class="container">
- <div class="row my-5">
-  <div class="col-sm-6 offset-sm-3">
-   <h3 class="text-center mt-4">Registration</h3>
-   <hr>
 
-   <form action="" method="post" novalidate class="shadow p-4">
-    <div class="mb-3">
-     <label for="inputEmail4" class="form-label">Email</label>
-     <input type="email" class="form-control" id="inputEmail4">
-     <div id="emailHelp" class="form-text">We'll never share your email with anyone else.</div>
+
+  
+
+
+
+
+   <div class="row my-5">
+    <div class="col-sm-6 offset-sm-3">
+     <hr>
+     <form action="" method="post"  class="shadow p-5">
+      {% csrf_token %}
+
+      <div class="mb-3">
+
+         {% if messages %}
+         {% for message in messages %}
+         <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+           <strong>Message : </strong> {{ message }}
+           <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+         </div>
+         {% endfor %}
+         {% endif %}
+   
+
+
+         <h3 class="text-center">Sign Up</h3>
+       <label for="username" class="form-label">Username</label>
+       <input type="text" name="username" class="form-control" id="username" aria-describedby="emailHelp" required>
+      </div>
+
+      <div class="mb-3">
+       <label for="email" class="form-label">Email</label>
+       <input type="email" name="email" class="form-control" id="email" aria-describedby="emailHelp" required>
+      </div>
+
+      <div class="mb-3">
+       <label for="pass1" class="form-label">Password</label>
+       <input type="password" name="pass1" class="form-control" id="pass1" required>
+      </div>
+
+      <div class="mb-3">
+       <label for="pass2" class="form-label">Confirm Password</label>
+       <input type="password" name="pass2" class="form-control" id="pass2" required>
+      </div>
+
+      {% comment %} <!-- <small><a href="#">Forgot Password ?</a></small> <br> {% endcomment %}
+     
+      <button type="submit" class="btn btn-primary">Submit</button>
+      <br>
+      <div class="text-center text-primary fw-bold"><small>Already have an account ? <a href="{% url 'login' %}"
+         class="text-danger">Login Here</a> </small></div>
+     </form>
     </div>
-    <div class="mb-3">
-     <label for="inputPassword1" class="form-label">Password</label>
-     <input type="password" class="form-control" id="inputPassword1">
-    </div>
-    <div class="mb-3">
-     <label for="inputPassword2" class="form-label">Confirm Password</label>
-     <input type="password" class="form-control" id="inputPassword2">
-    </div>
-    <div class="text-end">
-     <button type="submit" class="btn btn-danger">Submit</button>
-    </div>
-    <br>
-    <div class="text-center text-primary fw-bold"><small>Existing User ? <a href="{% url 'login' %}"
-       class="text-danger">Login Now</a> </small></div>
-    {% if form.non_field_errors %}
-    {% for error in form.non_field_errors %}
-    <p class="alert alert-danger my-3">{{error}}</p>
-    {% endfor %}
-    {% endif %}
-   </form>
+   </div>
   </div>
- </div>
-</div>
 {% endblock main-content %}

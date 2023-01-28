@@ -3,25 +3,40 @@
 {% block title %}Login{% endblock title %}
 {% block main-content %}
 <div class="container">
+
  <div class="row my-5">
   <div class="col-sm-6 offset-sm-3">
-   <h3 class="text-center mt-4">Login</h3>
+   {% comment %} <h3 class="text-center mt-4">Login</h3> {% endcomment %}
    <hr>
    <form action="" method="post" novalidate class="shadow p-5">
+    {% csrf_token %}
+
     <div class="mb-3">
-        {% comment %} <h3 class="text-center">Login</h3> {% endcomment %}
-     <label for="exampleInputEmail1" class="form-label">Email</label>
-     <input type="email" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp">
+
+
+        {% if messages %}
+    {% for message in messages %}
+    <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+      <strong>Message : </strong> {{ message }}
+      <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+    {% endfor %}
+    {% endif %}
+
+
+        <h3 class="text-center">Login</h3>
+     <label for="username" class="form-label">Username</label>
+     <input type="text" name="username" class="form-control" id="username" required >
     </div>
     <div class="mb-3">
-     <label for="exampleInputPassword1" class="form-label">Password</label>
-     <input type="password" class="form-control" id="exampleInputPassword1">
+     <label for="password" class="form-label">Password</label>
+     <input type="password" name="password" class="form-control" id="passsword" required >
     </div>
-    <small><a href="#">Forgot Password ?</a></small> <br>
-    <input type="submit" class="btn btn-primary mt-4" value="Login">
+    <small><a href="/forgot_password">Forgot Password ?</a></small> <br>
+    <button type="submit" class="btn btn-primary mt-3">Submit</button>
     <br>
-    <div class="text-center text-primary fw-bold"><small>New to ShoppinglyX ? <a href="{% url 'customerregistration' %}"
-       class="text-danger">Create an Account</a> </small></div>
+    <div class="text-center text-primary fw-bold"><small>Don't have an account ? <a href="{% url 'customerregistration' %}"
+       class="text-danger">Register Here</a> </small></div>
    </form>
   </div>
  </div>
