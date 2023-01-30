@@ -11,6 +11,7 @@ from .forms import *
 from django.contrib.auth.decorators import login_required
 from django.utils.decorators import method_decorator
 from django.db.models import Q
+from django.urls import reverse
 
 
 
@@ -35,13 +36,18 @@ class ProductView(View):
 class ProductDetailView(View):
     def get(self, request, pk):
         product = Product.objects.get(pk=pk)
-        return render(request, 'app/productdetail.html', {'product': product})
+        item_already_in_cart = False
+        if request.user.is_authenticated:
+
+            item_already_in_cart = Cart.objects.filter(Q(product=product.id) & Q(user=request.user)).exists()
+
+        return render(request, 'app/productdetail.html', {'product': product, 'item_already_in_cart':item_already_in_cart})
 
 
-
+@login_required
 def add_to_cart(request):
-    if request.user.is_anonymous:
-        return redirect('login')
+    # if request.user.is_anonymous:
+    #     return redirect('login')
 
     user = request.user
     product_id = request.GET.get('prod_id')
@@ -50,7 +56,7 @@ def add_to_cart(request):
     cart_obj.save()
     return redirect('/cart')
 
-@login_required(login_url='/login/')
+@login_required
 def show_cart(request):
     if request.user.is_authenticated:
         user = request.user
@@ -132,7 +138,7 @@ def remove_cart(request):
         return JsonResponse(data)
 
 
-@login_required(login_url='/login/')
+@login_required
 def buy_now(request):
  return render(request, 'app/buynow.html')
 
@@ -162,13 +168,14 @@ class ProfileView(View):
 
 
 
-@login_required(login_url='/login/')
+@login_required
 def address(request):
     address = Customer.objects.filter(user=request.user)
     return render(request, 'app/address.html', {'address': address, 'active':'btn-primary'})
 
 
-@login_required(login_url='/login/') 
+# @login_required(login_url='/login/') 
+@login_required
 def orders(request):
     user = request.user
     op = OrderPlaced.objects.filter(user=user)
@@ -241,7 +248,13 @@ def user_login(request):
         if user_obj is not None:
             login(request,user_obj)
             messages.success(request,"Log in Successful !")
-            return redirect('/')
+            try: 
+                return redirect(request.GET.get('next')) 
+            except TypeError:
+                return HttpResponseRedirect(reverse("profile"))
+            # return redirect(request.GET.get('next'))
+
+            # return redirect('profile')
 
         else:
             messages.warning(request,"Invalid Credentials! Please enter correct username or password !")
@@ -414,7 +427,7 @@ def forgot_password(request):
 
 
 
-@login_required(login_url='/login/')
+@login_required
 def checkout(request):
     user = request.user
     add = Customer.objects.filter(user=user)
@@ -432,7 +445,7 @@ def checkout(request):
     return render(request, 'app/checkout.html', {'add':add, 'totalamount':totalamount, 'cart_items':cart_items})
 
 
-# @login_required(login_url='/login/')
+@login_required
 def payment_done(request):
     user = request.user
     custid = request.GET.get('custid')

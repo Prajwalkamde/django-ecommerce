@@ -89,7 +89,7 @@
              {% comment %} <a href="{% url 'login' %}" class="nav-link text-white">Login</a> {% endcomment %}
             </li>
             <li class="nav-item mx-2">
-              <a href="{% url 'customerregistration' %}" class="btn btn-secondary text-center" >
+              <a href="{% url 'customerregistration' %}" class="btn btn-danger text-center" >
                 Sign Up
                </a>
              {% comment %} <a href="{% url 'customerregistration' %}" class="nav-link text-white">Registration</a> {% endcomment %}
@@ -110,9 +110,10 @@
     {% block main-content %} 
      
     {% endblock main-content %}
+    {% block payment-gateway %}{% endblock payment-gateway %}
 
     <!-- Start Footer -->
-    <footer class="container-fluid fixed-bottom bg-secondary text-center p-2 mt-5 ">
+    <footer class="container-fluid  bg-secondary text-center p-2 mt-5 ">
         <small class="text-white">Copyright &copy; 2023 || All Right Reserved. || Created by <a class="text-decoration-none text-white" href="https://www.linkedin.com/in/prajwal-kamde/">Prajwal Kamde</a></small>
         <img src="{% static 'app/images/payment.png' %}" alt="" srcset="" class="img-fluid" height="2px">
     </footer> <!-- End Footer -->
