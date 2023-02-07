@@ -20,6 +20,7 @@ from django.urls import reverse
 
 class ProductView(View):
     def get(self, request):
+        total_item_in_cart = 0
         mobiles = Product.objects.filter(category='M')
         laptops = Product.objects.filter(category='L')
         tvs = Product.objects.filter(category='TV')
@@ -27,22 +28,27 @@ class ProductView(View):
         fridges = Product.objects.filter(category='FG')
         earphones = Product.objects.filter(category='EP')
         printers = Product.objects.filter(category='PR')
-        return render(request, 'app/home.html', {'mobiles': mobiles, 'laptops': laptops, 'tvs': tvs, 'watches': watches, 'fridges': fridges, 'earphones': earphones, 'printers': printers})
+        if request.user.is_authenticated:
+            total_item_in_cart = len(Cart.objects.filter(user=request.user))
+        return render(request, 'app/home.html', {'mobiles': mobiles, 'laptops': laptops, 'tvs': tvs, 'watches': watches, 'fridges': fridges, 'earphones': earphones, 'printers': printers, 'total_item_in_cart':total_item_in_cart})
 
 
 # def product_detail(request):
 #  return render(request, 'app/productdetail.html')
 
-class ProductDetailView(View):
-    def get(self, request, pk):
+class ProductDetailView(View,):
+    def get(self, request, pk,):
         product = Product.objects.get(pk=pk)
         item_already_in_cart = False
         if request.user.is_authenticated:
 
             item_already_in_cart = Cart.objects.filter(Q(product=product.id) & Q(user=request.user)).exists()
 
-        return render(request, 'app/productdetail.html', {'product': product, 'item_already_in_cart':item_already_in_cart})
+        if request.user.is_authenticated:
+            total_item_in_cart = len(Cart.objects.filter(user=request.user))
 
+            return render(request, 'app/productdetail.html', {'product': product, 'item_already_in_cart':item_already_in_cart, 'total_item_in_cart':total_item_in_cart})
+        return render(request, 'app/productdetail.html', {'product': product, 'item_already_in_cart':item_already_in_cart, })
 
 @login_required
 def add_to_cart(request):
@@ -65,14 +71,23 @@ def show_cart(request):
         shipping_amount = 70
         cart_product = [p for p in Cart.objects.all() if p.user == user]
 
+        if len(cart) == 0:
+            cart.delete()
+
+
+        if request.user.is_authenticated:
+            total_item_in_cart = len(Cart.objects.filter(user=request.user))
+
         if cart_product:
             for p in cart_product:
                 tempamount = (p.quantity * p.product.discounted_price)
                 amount += tempamount
                 totalamount = amount + shipping_amount
+
+                
     
-            return render(request, 'app/addtocart.html', {'carts':cart, 'totalamount':totalamount, 'amount':amount})
-        return render(request, 'app/empty_cart.html')
+            return render(request, 'app/addtocart.html', {'carts':cart, 'totalamount':totalamount, 'amount':amount, 'total_item_in_cart':total_item_in_cart})
+        return render(request, 'app/empty_cart.html' , {'total_item_in_cart':total_item_in_cart})
 
 
 
@@ -102,7 +117,10 @@ def minus_cart(request):
     if request.method == 'GET':
         prod_id = request.GET['prod_id']
         c = Cart.objects.get(Q(product=prod_id) & Q(user=request.user))
-        c.quantity -= 1
+        if c.quantity > 1 :
+            c.quantity -= 1
+        
+            
         c.save()
         amount = 0.0
         shipping_amount = 70.0
@@ -128,6 +146,7 @@ def remove_cart(request):
         amount = 0.0
         shipping_amount = 70.0
         cart_product = [p for p in Cart.objects.all() if p.user == request.user]
+
         for p in cart_product:
             tempamount = (p.quantity * p.product.discounted_price)
             amount += tempamount
@@ -147,9 +166,13 @@ def buy_now(request):
 class ProfileView(View):
     def get(self, request): 
         if request.user.is_anonymous:
-            return redirect('login')       
+            return redirect('login')  
+
+        if request.user.is_authenticated:
+            total_item_in_cart = len(Cart.objects.filter(user=request.user))
+
         form = CustomerProfileForm()
-        return render(request, 'app/profile.html', {'form' : form, 'active':'btn-primary'})
+        return render(request, 'app/profile.html', {'form' : form, 'active':'btn-primary', 'total_item_in_cart':total_item_in_cart})
 
     def post(self, request):
         form = CustomerProfileForm(request.POST)
@@ -171,7 +194,9 @@ class ProfileView(View):
 @login_required
 def address(request):
     address = Customer.objects.filter(user=request.user)
-    return render(request, 'app/address.html', {'address': address, 'active':'btn-primary'})
+    if request.user.is_authenticated:
+            total_item_in_cart = len(Cart.objects.filter(user=request.user))
+    return render(request, 'app/address.html', {'address': address, 'active':'btn-primary', 'total_item_in_cart':total_item_in_cart})
 
 
 # @login_required(login_url='/login/') 
@@ -179,7 +204,9 @@ def address(request):
 def orders(request):
     user = request.user
     op = OrderPlaced.objects.filter(user=user)
-    return render(request, 'app/orders.html', {'order_placed' : op})
+    if request.user.is_authenticated:
+            total_item_in_cart = len(Cart.objects.filter(user=request.user))
+    return render(request, 'app/orders.html', {'order_placed' : op, 'total_item_in_cart':total_item_in_cart})
 
 
 
@@ -199,7 +226,10 @@ def mobile(request, data=None):
     elif data == "above-10000":
         mobiles = Product.objects.filter(category="M").filter(discounted_price__gt=10000)
 
-    return render(request, 'app/mobile.html', {'mobiles': mobiles})
+    if request.user.is_authenticated:
+            total_item_in_cart = len(Cart.objects.filter(user=request.user))
+
+    return render(request, 'app/mobile.html', {'mobiles': mobiles, 'total_item_in_cart':total_item_in_cart})
 
 
 
@@ -217,7 +247,10 @@ def watch(request, data=None):
     elif data == "above-2000":
         watches = Product.objects.filter(category="W").filter(discounted_price__gt=2000)
 
-    return render(request, 'app/watch.html', {'watches': watches})
+    if request.user.is_authenticated:
+            total_item_in_cart = len(Cart.objects.filter(user=request.user))
+
+    return render(request, 'app/watch.html', {'watches': watches, 'total_item_in_cart':total_item_in_cart})
 
 
 
@@ -442,7 +475,10 @@ def checkout(request):
             amount += tempamount
         totalamount = amount +shipping_amount
 
-    return render(request, 'app/checkout.html', {'add':add, 'totalamount':totalamount, 'cart_items':cart_items})
+    if request.user.is_authenticated:
+            total_item_in_cart = len(Cart.objects.filter(user=request.user))
+
+    return render(request, 'app/checkout.html', {'add':add, 'totalamount':totalamount, 'cart_items':cart_items, 'total_item_in_cart':total_item_in_cart})
 
 
 @login_required
